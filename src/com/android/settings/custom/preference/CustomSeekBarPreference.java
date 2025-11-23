@@ -49,6 +49,7 @@ public class CustomSeekBarPreference extends Preference implements Slider.OnChan
     protected boolean mShowSign = false;
     protected String mUnits = "";
     protected boolean mContinuousUpdates = false;
+    protected boolean mShowButtons;
 
     protected int mMinValue = 0;
     protected int mMaxValue = 100;
@@ -78,6 +79,7 @@ public class CustomSeekBarPreference extends Preference implements Slider.OnChan
                 mUnits = " " + units;
             mContinuousUpdates = a.getBoolean(
                     R.styleable.CustomSeekBarPreference_continuousUpdates, false);
+            mShowButtons = a.getBoolean(R.styleable.CustomSeekBarPreference_showButtons, true);
         } finally {
             a.recycle();
         }
@@ -233,6 +235,11 @@ public class CustomSeekBarPreference extends Preference implements Slider.OnChan
         mResetImageView = (ImageView) holder.findViewById(R.id.reset);
         mMinusImageView = (ImageView) holder.findViewById(R.id.minus);
         mPlusImageView = (ImageView) holder.findViewById(R.id.plus);
+
+        if (!mShowButtons) {
+            mMinusImageView.setVisibility(View.GONE);
+            mPlusImageView.setVisibility(View.GONE);
+        }
 
         updateValueViews();
 
