@@ -22,9 +22,11 @@ import android.util.AttributeSet;
 
 import androidx.preference.PreferenceDataStore;
 
+import com.android.settingslib.widget.GroupSectionDividerMixin;
 import com.android.settingslib.widget.MainSwitchPreference;
 
-public class SecureSettingMainSwitchPreference extends MainSwitchPreference {
+public class SecureSettingMainSwitchPreference extends MainSwitchPreference
+        implements GroupSectionDividerMixin {
 
     public SecureSettingMainSwitchPreference(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
