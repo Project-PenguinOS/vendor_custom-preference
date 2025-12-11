@@ -32,7 +32,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.settings.R;
+import com.android.settings.custom.R;
 import com.android.settingslib.widget.SettingsThemeHelper;
 
 import com.google.android.material.slider.LabelFormatter;

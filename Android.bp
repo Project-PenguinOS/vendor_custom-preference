@@ -1,6 +1,9 @@
 android_library {
 
     name: "custom-preference",
+    defaults: [
+        "SettingsLibDefaults",
+    ],
 
     optimize: {
         enabled: false,
