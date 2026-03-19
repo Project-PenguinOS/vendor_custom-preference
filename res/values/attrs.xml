@@ -37,4 +37,11 @@
         <attr name="showButtons" format="boolean" />
         <attr name="defaultValueText" format="string|reference" />
     </declare-styleable>
+
+    <!-- Base attributes available to DeviceConfigSwitchPreference. -->
+    <declare-styleable name="DeviceConfigSwitchPreference">
+        <attr name="deviceConfigNamespace" format="string" />
+        <attr name="deviceConfigFlag" format="string" />
+        <attr name="deviceConfigDefault" format="boolean" />
+    </declare-styleable>
 </resources>
