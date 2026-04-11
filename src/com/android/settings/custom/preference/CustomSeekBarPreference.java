@@ -83,23 +83,35 @@ public class CustomSeekBarPreference extends Preference implements Slider.OnChan
 
         try {
             String newInterval = attrs.getAttributeValue(SETTINGS_NS, "interval");
+            if (newInterval == null) {
+                newInterval = attrs.getAttributeValue(SETTINGS_NS_ALT, "interval");
+            }
             if (newInterval != null) {
                 mInterval = Integer.parseInt(newInterval);
-            } else {
-                newInterval = attrs.getAttributeValue(SETTINGS_NS_ALT, "interval");
-                if (newInterval != null) mInterval = Integer.parseInt(newInterval);
             }
         } catch (Exception e) {
             Log.e(TAG, "Invalid interval value", e);
         }
+
         mMinValue = attrs.getAttributeIntValue(SETTINGS_NS, "min", mMinValue);
         if (mMinValue == 0) {
             int min = attrs.getAttributeIntValue(SETTINGS_NS_ALT, "min", mMinValue);
             if (min != 0) mMinValue = min;
         }
         mMaxValue = attrs.getAttributeIntValue(ANDROIDNS, "max", mMaxValue);
-        if (mMaxValue < mMinValue)
+        if (mMaxValue < mMinValue) {
             mMaxValue = mMinValue;
+        }
+
+        int span = Math.max(0, mMaxValue - mMinValue);
+        if (mInterval <= 0 || span == 0) {
+            mInterval = 1;
+        } else if ((span % mInterval) != 0) {
+            int commonDivisor = gcd(span, mInterval);
+            mInterval = Math.max(1, commonDivisor);
+            Log.w(TAG, "Adjusted interval to " + mInterval + " to perfectly divide range " + span);
+        }
+
         String defaultValue = attrs.getAttributeValue(ANDROIDNS, "defaultValue");
         mDefaultValueExists = defaultValue != null && !defaultValue.isEmpty();
         if (!mDefaultValueExists) {
@@ -138,6 +150,7 @@ public class CustomSeekBarPreference extends Preference implements Slider.OnChan
     public void onBindViewHolder(PreferenceViewHolder holder) {
         super.onBindViewHolder(holder);
         mSlider = (Slider) holder.findViewById(R.id.slider);
+        mSlider.setStepSize(0);
         mSlider.setValueTo(mMaxValue);
         mSlider.setValueFrom(mMinValue);
         mSlider.setValue(mValue);
@@ -429,5 +442,15 @@ public class CustomSeekBarPreference extends Preference implements Slider.OnChan
     public void refresh(int newValue) {
         // this will ...
         setValue(newValue, mSlider != null);
+    }
+
+    private static int gcd(int a, int b) {
+        a = Math.abs(a); b = Math.abs(b);
+        if (a == 0) return b;
+        if (b == 0) return a;
+        while (b != 0) {
+            int t = b; b = a % b; a = t;
+        }
+        return a;
     }
 }
