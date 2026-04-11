@@ -123,7 +123,7 @@ public class CustomSeekBarPreference extends Preference implements Slider.OnChan
             mDefaultValueExists = defaultValue != null && !defaultValue.isEmpty();
         }
         if (mDefaultValueExists) {
-            mDefaultValue = getLimitedValue(Integer.parseInt(defaultValue));
+            mDefaultValue = getLimitedValue(getRoundedValue(Integer.parseInt(defaultValue)));
             mValue = mDefaultValue;
         } else {
             mValue = mMinValue;
@@ -150,10 +150,17 @@ public class CustomSeekBarPreference extends Preference implements Slider.OnChan
     public void onBindViewHolder(PreferenceViewHolder holder) {
         super.onBindViewHolder(holder);
         mSlider = (Slider) holder.findViewById(R.id.slider);
+        
+        mSlider.clearOnChangeListeners();
+        mSlider.clearOnSliderTouchListeners();
+        
         mSlider.setStepSize(0);
         mSlider.setValueTo(mMaxValue);
         mSlider.setValueFrom(mMinValue);
+        
+        mValue = getLimitedValue(getRoundedValue(mValue));
         mSlider.setValue(mValue);
+        
         mSlider.setEnabled(isEnabled());
         mSlider.setLabelBehavior(LabelFormatter.LABEL_GONE);
         mSlider.setTickVisible(false);
@@ -351,8 +358,9 @@ public class CustomSeekBarPreference extends Preference implements Slider.OnChan
 
     @Override
     protected void onSetInitialValue(boolean restoreValue, Object defaultValue) {
-        if (restoreValue)
-            mValue = getPersistedInt(mValue);
+        if (restoreValue) {
+            mValue = getLimitedValue(getRoundedValue(getPersistedInt(mValue)));
+        }
     }
 
     @Override
@@ -452,5 +460,21 @@ public class CustomSeekBarPreference extends Preference implements Slider.OnChan
             int t = b; b = a % b; a = t;
         }
         return a;
+    }
+
+    private int getRoundedValue(int value) {
+        if (mInterval <= 1) {
+            return value;
+        }
+        int relativeValue = value - mMinValue;
+        int remainder = relativeValue % mInterval;
+        if (remainder == 0) {
+            return value;
+        }
+        if (remainder < (float) mInterval / 2) {
+            return value - remainder;
+        } else {
+            return value + (mInterval - remainder);
+        }
     }
 }
